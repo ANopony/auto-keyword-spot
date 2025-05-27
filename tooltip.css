@@ -1,0 +1,31 @@
+
+.auto-hyperlink-link {
+    color: #1a73e8;
+    text-decoration: underline dotted;
+    cursor: pointer;
+    position: relative;
+}
+
+.auto-hyperlink-tooltip {
+    background-color: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    z-index: 10000;
+    max-width: 250px;
+    word-wrap: break-word;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.auto-hyperlink-tooltip.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.auto-hyperlink-tooltip a {
+    color: #8ab4f8;
+    text-decoration: underline;
+}
