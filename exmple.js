@@ -7,8 +7,8 @@ import AutoHyperlink from './path/to/auto-hyperlink'; // Adjust path
 
 document.addEventListener('DOMContentLoaded', () => {
     const autoLinker = new AutoHyperlink({
-        definitionApiUrl: 'http://localhost:3001/api/definition', // Your backend API URL
-        keywords: ["大模型", "机器学习", "前端", "Electron", "AI"] // Optional: override or extend keywords
+        definitionApiUrl: 'http://localhost:506/api/extract_keywords', // Your backend API URL
+        debounceDelay: 700 // Debounce delay in milliseconds
     });
 
     // Start observing changes in the document body or a specific container
@@ -26,8 +26,8 @@ import AutoHyperlink from './path/to/auto-hyperlink'; // Adjust path relative to
 
 document.addEventListener('DOMContentLoaded', () => {
     const autoLinker = new AutoHyperlink({
-        definitionApiUrl: 'http://localhost:3001/api/definition', // Your backend API URL
-        keywords: ["大模型", "机器学习", "NodeJS", "Web应用"] // Adjust keywords
+        definitionApiUrl: 'http://localhost:506/api/extract_keywords', // Your backend API URL
+        debounceDelay: 700 // Debounce delay in milliseconds
     });
 
     // Start observing changes in the document body or a specific content area
