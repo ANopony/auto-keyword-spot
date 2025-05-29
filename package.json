@@ -1,6 +1,6 @@
 {
   "name": "auto-keyword-spot",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,6 +10,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@popperjs/core": "^2.11.8"
-  }
+    "@popperjs/core": "^2.11.8",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "files": [
+    "index.js",
+    "server.js",
+    "tooltip.css",
+    "package.json",
+    "README.md"
+  ]
 }
