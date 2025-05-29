@@ -351,17 +351,22 @@ class AutoHyperlink {
       a.textContent = keyword;
       a.dataset.term = keyword; // 存储关键词用于悬停提示
 
-      // 悬停事件监听
+      // 点击事件监听
       console.log("[replace] 添加悬停事件监听器", keyword);
-      a.addEventListener('mouseenter', async (e) => {
+      a.addEventListener('click', async (e) => {
+        e.preventDefault(); // 阻止默认点击行为
         const termToLookup = e.target.dataset.term;
-        const def = keywordsMap[termToLookup.toLowerCase()] || keywordsMap[termToLookup]; // 从已获取的字典中查找
+        const def = keywordsMap[termToLookup.toLowerCase()] || keywordsMap[termToLookup];
         if (def) {
-          showTooltip(e.target, `<strong>${termToLookup}</strong>: ${def.description || '无解释'} ${def.link ? `<br><a href="${def.link}" target="_blank" rel="noopener noreferrer">更多信息</a>` : ''}`);
+          showTooltip(e.target, `<strong>${termToLookup}</strong>: ${def.description || '无解释'}${def.link ? `<br><a href="${def.link}" target="_blank" rel="noopener noreferrer">更多信息</a>` : ''}`);
         }
       });
-      a.addEventListener('mouseleave', hideTooltip);
-      a.addEventListener('click', (e) => e.preventDefault()); // 阻止默认点击行为
+      // 点击其他地方关闭
+      document.addEventListener('click', (event) => {
+        if (!event.target.classList.contains('auto-hyperlink-link') && currentTooltip) {
+          hideTooltip();
+        }
+      });
 
       fragment.appendChild(a);
       lastIndex = index + keyword.length;

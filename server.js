@@ -1,44 +1,60 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser'); // 用于解析 JSON 请求体
+const bodyParser = require('body-parser');
+const axios = require('axios'); // 新增
+
 const app = express();
 const port = 943;
 
-app.use(cors()); // 允许跨域请求
-app.use(bodyParser.json({ limit: '50mb' })); 
+app.use(cors());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 async function pleaseLLM(text) {
   console.log(`[pleaseLLM] Received text: "${text.substring(0, Math.min(text.length, 100))}..."`);
 
-//   try {
-//     const response = await fetch('http://localhost:16688/api/llm', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify({ text })
-//     });
-//     const content = response.data;
-//     return content;
-//   } catch (error) {
-//     console.error(`[pleaseLLM] Error: ${error.message}`);
-//     return {};
-//   }
-  const keywords = {};
-  if (text.includes("大模型")) {
-    keywords["大模型"] = {
-      description: "指具有庞大参数量和复杂结构的人工智能模型，通常通过海量数据训练，能处理多种复杂任务。",
-      link: "https://zh.wikipedia.org/wiki/%E5%A4%A7%E5%9E%8B%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"
+  try {
+    const request = {
+      model: "qwen2.5:1.5b",
+      messages: [
+        {
+          "role": "system",
+          "content": `你是一个专业的文本分析助手。请从以下文本中提取关键技术词汇、概念或专有名词（例如"大模型", "DOM", "机器学习", "Transformer", "神经网络"等），并为每个词汇提供一个简洁的解释和一个相关的外部链接（如果有）。
+            请直接以标准 JSON 对象格式返回，格式如下：
+            {
+              "关键词1": {"description": "解释", "link": "链接"},
+              "关键词2": {"description": "解释", "link": "链接"}
+            }
+            不要输出 markdown 代码块，不要输出数组，也不要输出多余的文字。`
+        },
+        { "role": "user", "content": text }
+      ],
+      stream: false,
     };
+
+    const response = await axios.post(
+      'http://127.0.0.1:16688/aog/v0.3/services/chat',
+      request,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    const result = response.data;
+    console.info(`[pleaseLLM] Response received: ${JSON.stringify(result)}`);
+    const content = result.message.content;
+    console.info(`[pleaseLLM] Content extracted: ${content}`);
+    if (!content) return {};
+    let keywords;
+    try {
+      keywords = JSON.parse(content);
+    } catch (e) {
+      console.error('JSON parse error:', e, content);
+      return {};
+    }
+    return keywords;
+  } catch (error) {
+    console.error(`[pleaseLLM] Error: ${error.message}`);
+    return {};
   }
-  if (text.includes("机器学习")) {
-    keywords["机器学习"] = {
-      description: "人工智能的一个分支，通过算法使计算机从数据中学习，无需明确编程。",
-      link: "https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"
-    };
-  }
-  return keywords;
 }
 
 app.post('/api/extract_keywords', async (req, res) => {
@@ -57,7 +73,6 @@ app.post('/api/extract_keywords', async (req, res) => {
         console.error(`[API] Error extracting keywords: ${error.message}`);
         res.status(500).json({ error: 'Internal server error' });
     }
-
 });
 
 app.listen(port, () => {
