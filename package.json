@@ -3,12 +3,13 @@
   "version": "0.1.4",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "本项目意在实现类似bilibili评论区、知乎回答、飞书文档中的关键词高亮功能。",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "axios": "^1.9.0",

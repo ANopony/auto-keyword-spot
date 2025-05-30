@@ -1,6 +1,8 @@
 /.vscode
 /.idea
 
+/web-demo/node_modules/
+/web-demo/dist/
 /node_modules/
 
 package-lock.json
