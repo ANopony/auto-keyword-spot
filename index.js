@@ -1,6 +1,6 @@
-// index.js (重新优化后的前端库文件)
 const { createPopper } = require('@popperjs/core');
 
+// 在引用项目的 css 后面加上这么一段
 function injectCSS(css) {
   if (document.head.querySelector('#auto-hyperlink-styles')) {
     return; // 避免重复注入
@@ -15,16 +15,19 @@ function injectCSS(css) {
 let currentTooltip = null;
 let currentPopper = null;
 
+// 显示解释框
 function showTooltip(element, content) {
   if (currentTooltip) {
     hideTooltip();
   }
 
+  // 解释框的内容
   currentTooltip = document.createElement('div');
   currentTooltip.className = 'auto-hyperlink-tooltip';
   currentTooltip.innerHTML = content;
   document.body.appendChild(currentTooltip);
 
+  // 解释框的样式
   requestAnimationFrame(() => {
     currentPopper = createPopper(element, currentTooltip, {
       placement: 'top',
@@ -44,6 +47,7 @@ function showTooltip(element, content) {
   });
 }
 
+// 隐藏销毁解释框
 function hideTooltip() {
   if (currentTooltip) {
     currentTooltip.classList.remove('visible');
@@ -60,7 +64,7 @@ function hideTooltip() {
   }
 }
 
-// 辅助函数：查找文本中的下一个分隔符（如句号、问号、换行）
+// 查找文本中的下一个分隔符
 function findNextSegmentEnd(text, startIndex) {
     const delimiters = ['.', '。', '?', '？', '!', '！', '\n'];
     let minIndex = -1;
@@ -87,7 +91,7 @@ class AutoHyperlink {
     this.targetContainers = new Set();        // 存储所有需要处理的容器元素
     this.isProcessingMutation = false;        // 标记是否正在处理由自身导致的 DOM 变动
 
-    // 注入一次 CSS
+    // 注入 css
     injectCSS(`
       .auto-hyperlink-link {
           color: #1a73e8;
@@ -128,7 +132,7 @@ class AutoHyperlink {
   }
 
   /**
-   * 调用后端 LLM API 提取关键词和定义。
+   * 调用后端 LLM API 提取关键词、定义、链接。
    * @param {string} text 需要处理的文本。
    * @returns {Promise<Object>} 包含关键词及其定义的对象。
    */
@@ -167,13 +171,14 @@ class AutoHyperlink {
    * @param {HTMLElement} containerElement 流式输出的容器元素。
    */
   async _processStreamingContainer(containerElement) {
+    // 获取全部内容
     const currentFullText = containerElement.textContent || '';
     let lastProcessedLength = this.processedTextLengths.get(containerElement) || 0;
     
-    // 提取自上次处理以来新增的文本部分
+    // 获取上回处理到哪了
     const newTextSegmentRaw = currentFullText.substring(lastProcessedLength);
 
-    // 如果没有新文本或新文本过短，不处理
+    // 喜欢长的
     if (newTextSegmentRaw.trim().length < 5) {
         return;
     }
@@ -182,7 +187,7 @@ class AutoHyperlink {
     let segmentEndRelative = findNextSegmentEnd(newTextSegmentRaw, segmentStartIndex);
     let hasProcessedSegment = false; // 标记是否至少处理了一个完整分段
 
-    // 循环提取并处理完整的句子/段落
+    // 循环提取并处理文本
     while (segmentEndRelative !== -1) {
         const textToProcess = newTextSegmentRaw.substring(segmentStartIndex, segmentEndRelative).trim();
 
@@ -207,8 +212,7 @@ class AutoHyperlink {
         hasProcessedSegment = true;
     }
 
-    // 只有当至少处理了一个分段（或剩余文本）后，才更新 processedTextLengths
-    // 这样确保 LLM 真正处理了这部分文本，避免下次重复处理
+    // 确保 LLM 真处理了这部分文本
     if (hasProcessedSegment) {
         this.processedTextLengths.set(containerElement, currentFullText.length);
     }

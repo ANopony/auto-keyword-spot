@@ -1,5 +1,5 @@
 // In your Electron renderer process's main JS file (e.g., renderer.js)
-import AutoHyperlink from './path/to/auto-hyperlink'; // Adjust path
+const AutoHyperlink = require("auto-keyword-spot"); // Adjust path
 
 // If using Tippy.js, import its CSS too:
 // import 'tippy.js/dist/tippy.css'; // Basic theme
