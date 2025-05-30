@@ -33,3 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start observing changes in the document body or a specific content area
     autoLinker.observe(document.getElementById('article-content') || document.body);
 });
+
+// TODO: 找专业的模型
+// TODO: 只标注第一个重复的关键词
+// TODO: 只匹配关键词
+// TODO: 优化 system prompt
+// TODO: 为不同知识储备的用户提供个性化的 prompt 以提取不同领域的关键词
+// TODO: 结合知识库搜索关键词和模型识别关键词
+// TODO: 在用户的机器上启动 server
+// TODO: 集成 MCP
