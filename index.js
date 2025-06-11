@@ -91,7 +91,7 @@ class AutoHyperlink {
     this.targetContainers = new Set();        // 存储所有需要处理的容器元素
     this.isProcessingMutation = false;        // 标记是否正在处理由自身导致的 DOM 变动
 
-    // 注入 css
+    // 注入超链接样式
     injectCSS(`
       .auto-hyperlink-link {
           color: #1a73e8;
